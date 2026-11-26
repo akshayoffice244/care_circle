@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../core/constants/app_colors.dart';
+import '../core/services/notification_service.dart';
 import '../features/appointment/presentation/bloc/appointment_bloc.dart';
 import '../features/appointment/presentation/bloc/appointment_event.dart';
 import '../features/appointment/presentation/screens/appointment_list_screen.dart';
@@ -34,11 +35,15 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     _loadAllCircleData();
   }
 
-  void _loadAllCircleData() {
+  Future<void> _loadAllCircleData() async {
     final authState = context.read<AuthBloc>().state;
     if (authState is AuthenticatedState) {
       final circleId = authState.user.activeCircleId;
       if (circleId != null && circleId.isNotEmpty) {
+        // Clear all orphaned ghost alarms from old app versions
+        await NotificationService().cancelAll();
+
+        if (!mounted) return;
         context.read<MedicationBloc>().add(LoadMedicationsEvent(circleId));
         context.read<AppointmentBloc>().add(LoadAppointmentsEvent(circleId));
         context.read<TaskBloc>().add(LoadTasksEvent(circleId));

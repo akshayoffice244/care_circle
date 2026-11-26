@@ -73,24 +73,15 @@ class _AddAppointmentScreenState extends State<AddAppointmentScreen> {
         reminderToBookUpcoming: _reminderToBookUpcoming,
       );
 
-      // Save to Firebase
+      // Save to Firebase (AppointmentBloc automatically schedules the alarm for the circle)
       context.read<AppointmentBloc>().add(AddAppointmentEvent(appointment));
 
-      // Trigger notification alert & schedule appointment alarm
+      // Show immediate booking confirmation banner
       if (_setReminder) {
-        // 1. Instant confirmation
         NotificationService().showNotification(
-          id: appointment.doctorName.hashCode,
+          id: 777,
           title: 'Doctor Appointment Scheduled 🩺',
           body: 'Visit with ${appointment.doctorName} on ${DateFormat("MMM d, h:mm a").format(fullDateTime)}',
-        );
-
-        // 2. Scheduled alarm for the actual date & time of the visit!
-        NotificationService().scheduleAppointmentReminder(
-          id: appointment.doctorName.hashCode,
-          doctorName: appointment.doctorName,
-          clinic: appointment.clinicOrHospital,
-          appointmentDateTime: fullDateTime,
         );
       }
 

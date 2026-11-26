@@ -80,14 +80,28 @@ class MedicationBloc extends Bloc<MedicationEvent, MedicationState> {
           final timeStr = med.scheduleTimes[i];
           final parsed = _parseTimeString(timeStr);
           if (parsed != null) {
+            final notifId = (med.id.hashCode.abs() % 100000) + i;
+            // Purge any legacy IDs that cause duplicate alarms
+            await NotificationService().cancelNotification(med.name.hashCode + i);
+            await NotificationService().cancelNotification(med.name.hashCode);
+            await NotificationService().cancelNotification(med.id.hashCode + i);
+
             await NotificationService().scheduleDailyMedicationReminder(
-              id: (med.id.hashCode.abs() % 100000) + i,
+              id: notifId,
               medicineName: med.name,
               dosage: med.dosage,
               hour: parsed['hour']!,
               minute: parsed['minute']!,
             );
           }
+        }
+      } else {
+        // When marked as taken today, cancel pending alarm for today
+        for (int i = 0; i < med.scheduleTimes.length; i++) {
+          final notifId = (med.id.hashCode.abs() % 100000) + i;
+          await NotificationService().cancelNotification(notifId);
+          await NotificationService().cancelNotification(med.name.hashCode + i);
+          await NotificationService().cancelNotification(med.name.hashCode);
         }
       }
     }
@@ -139,8 +153,15 @@ class MedicationBloc extends Bloc<MedicationEvent, MedicationState> {
     try {
       await deleteMedicationUseCase(event.medicationId);
       for (int i = 0; i < event.scheduleTimesCount; i++) {
+        // Cancel authoritative ID
+        await NotificationService().cancelNotification(
+            (event.medicationId.hashCode.abs() % 100000) + i);
+        // Cancel legacy IDs
         await NotificationService().cancelNotification(event.medicationName.hashCode + i);
+        await NotificationService().cancelNotification(event.medicationId.hashCode + i);
       }
+      await NotificationService().cancelNotification(event.medicationName.hashCode);
+      await NotificationService().cancelNotification(event.medicationId.hashCode);
     } catch (e) {
       emit(MedicationErrorState(e.toString()));
     }

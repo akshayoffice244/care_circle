@@ -110,6 +110,9 @@ class NotificationService {
 
     final safeId = id.abs() % 2147483647;
 
+    // Explicitly cancel any pending alarm with this ID to prevent duplicate intents
+    await _notificationsPlugin.cancel(safeId);
+
     await _notificationsPlugin.zonedSchedule(
       safeId,
       'Time for Medicine: $medicineName 💊',
@@ -135,6 +138,7 @@ class NotificationService {
 
     if (scheduledDate.isAfter(now)) {
       final safeId = id.abs() % 2147483647;
+      await _notificationsPlugin.cancel(safeId);
       await _notificationsPlugin.zonedSchedule(
         safeId,
         'Doctor Visit: $doctorName 🩺',
@@ -160,6 +164,7 @@ class NotificationService {
 
     if (scheduledDate.isAfter(now)) {
       final safeId = id.abs() % 2147483647;
+      await _notificationsPlugin.cancel(safeId);
       await _notificationsPlugin.zonedSchedule(
         safeId,
         'Care Task Due: $taskTitle ✅',
@@ -176,5 +181,10 @@ class NotificationService {
   Future<void> cancelNotification(int id) async {
     final safeId = id.abs() % 2147483647;
     await _notificationsPlugin.cancel(safeId);
+  }
+
+  /// Cancels all scheduled alarms and notifications across the application.
+  Future<void> cancelAll() async {
+    await _notificationsPlugin.cancelAll();
   }
 }

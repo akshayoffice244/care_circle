@@ -50,6 +50,7 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     // Automatically sync upcoming appointment alarms on this device
     for (final appt in event.appointments) {
       if (!appt.isCompleted && appt.appointmentDateTime.isAfter(DateTime.now())) {
+        await NotificationService().cancelNotification(appt.doctorName.hashCode);
         await NotificationService().scheduleAppointmentReminder(
           id: appt.id.hashCode,
           doctorName: appt.doctorName,
@@ -94,7 +95,9 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
       DeleteAppointmentEvent event, Emitter<AppointmentState> emit) async {
     try {
       await deleteAppointmentUseCase(event.appointmentId);
+      await NotificationService().cancelNotification(event.appointmentId.hashCode);
       await NotificationService().cancelNotification(event.doctorName.hashCode);
+      await NotificationService().cancelNotification((event.appointmentId + '_followup').hashCode);
     } catch (e) {
       emit(AppointmentErrorState(e.toString()));
     }

@@ -74,15 +74,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         dueDate: fullDueDate,
       );
 
+      // Save to Firebase (TaskBloc automatically schedules the single alarm for the circle)
       context.read<TaskBloc>().add(AddTaskEvent(task));
-
-      // Schedule notification reminder for the task due date & time!
-      NotificationService().scheduleTaskReminder(
-        id: task.title.hashCode,
-        taskTitle: task.title,
-        assigneeName: task.assignedToName,
-        dueDateTime: fullDueDate,
-      );
 
       Navigator.pop(context);
     }

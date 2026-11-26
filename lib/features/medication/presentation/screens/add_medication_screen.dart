@@ -53,20 +53,8 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
         scheduleTimes: formattedTimes,
       );
 
-      // Save to Firebase via BLoC
+      // Save to Firebase via BLoC (MedicationBloc automatically handles scheduling for the circle)
       context.read<MedicationBloc>().add(AddMedicationEvent(medication));
-
-      // Schedule local notification alarms
-      for (int i = 0; i < _selectedTimes.length; i++) {
-        final time = _selectedTimes[i];
-        NotificationService().scheduleDailyMedicationReminder(
-          id: medication.name.hashCode + i,
-          medicineName: medication.name,
-          dosage: medication.dosage,
-          hour: time.hour,
-          minute: time.minute,
-        );
-      }
 
       Navigator.pop(context);
     }

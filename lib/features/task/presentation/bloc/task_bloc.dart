@@ -48,6 +48,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     // Automatically sync task alarms for pending tasks on this device
     for (final task in event.tasks) {
       if (!task.isCompleted && task.dueDate.isAfter(DateTime.now())) {
+        await NotificationService().cancelNotification(task.title.hashCode);
         await NotificationService().scheduleTaskReminder(
           id: task.id.hashCode,
           taskTitle: task.title,
