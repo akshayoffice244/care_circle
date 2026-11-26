@@ -35,7 +35,7 @@ A cross-platform mobile application built with Flutter designed to help families
 - **Role-Based Access**: Support for Primary Caregiver and Family Member roles.
 
 ---
-
+a
 ## Tech Stack & Architecture
 
 - **Framework**: [Flutter](https://flutter.dev) (Dart 3.x)
@@ -134,6 +134,7 @@ Care Circle uses exact alarms to ensure critical medicine and appointment alerts
 The following permissions are configured in `android/app/src/main/AndroidManifest.xml`:
 - `android.permission.RECEIVE_BOOT_COMPLETED` (Restores alarms after device reboot)
 - `android.permission.VIBRATE` (Provides haptic feedback for alarms)
+- `android.permission.WAKE_LOCK` (Prevents CPU from sleeping)
 - `android.permission.POST_NOTIFICATIONS` (Notification display on Android 13+)
 - `android.permission.SCHEDULE_EXACT_ALARM` (Exact timing for medication schedules)
 
