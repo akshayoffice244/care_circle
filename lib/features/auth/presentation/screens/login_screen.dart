@@ -64,12 +64,27 @@ class _LoginScreenState extends State<LoginScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       // Header Icon & Title
-                      const Center(
-                        child: CircleAvatar(
-                          radius: 40,
-                          backgroundColor: AppColors.primaryLight,
-                          child: Icon(Icons.favorite_rounded,
-                              size: 40, color: AppColors.primary),
+                      Center(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(22),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primary.withAlpha(40),
+                                blurRadius: 16,
+                                offset: const Offset(0, 6),
+                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(22),
+                            child: Image.asset(
+                              'assets/icons/app_icon.png',
+                              width: 84,
+                              height: 84,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 20),
